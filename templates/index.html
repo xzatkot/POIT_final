@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+  <title>Flask-SocketIO Test</title>
+   <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.5/socket.io.min.js"></script>
+   <script src="static/libs/gauge.min.js"></script>
+   <script src="static/libs/jquery-1.11.1.min.js"></script>
+   <script src="static/libs/plotly-latest.min.js"></script>
+   <script type="text/javascript" charset="utf-8">
+    $(document).ready(function() {
+      var socket;
+      let ready = false;
+      $('form#connect').submit(function(event) {
+        console.log('Connected');
+        namespace = '/test';
+        socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);        
+        
+        socket.on('connect', function() {
+          socket.emit('my_event', {data: 'I\'m connected!', value: 1});
+        });
+        
+        socket.on('my_response', function(msg) {
+          console.log(msg.data);
+          $('#log').append('Received #'+msg.count+': '+msg.data+'<br>').html();
+          if (parseFloat(msg.data) < 20) {
+            gauge.value = 1;
+          } else {
+            gauge.value = 0;
+          }
+        });
+        
+        $('#buttonVal').click(function(event) {
+          console.log($('#buttonVal').val());
+          socket.emit('db_event', {value: $('#buttonVal').val()});
+          if ($(this).val() == "start") {
+            $(this).val("stop");
+            $(this).text("Stop");
+          }
+          else {
+            $(this).val("start");
+            $(this).text("Start");
+          }
+          return false;
+        });
+          
+        $('form#disconnect').submit(function(event) {
+          socket.emit('disconnect_request');
+          return false;
+        });
+      });
+
+      if (ready) {
+         
+          
+          //$('form#emit').submit(function(event) {
+              //socket.emit('my_event', {value: $('#emit_value').val()});
+              //return false; });
+          
+        
+      }
+      
+      var gauge = new RadialGauge({
+          renderTo: 'canvasID',
+          width: 300,
+          height: 300,
+          units: "Position",
+          minValue: 0,
+          maxValue: 1,
+          majorTicks: [
+              "Closed",
+              "Open"
+          ],
+          minorTicks: 0,
+          strokeTicks: true,
+          highlights: [
+              {
+                  "from": 0.5,
+                  "to": 1,
+                  "color": "rgba(200, 50, 50, .75)"
+              }
+          ],
+          colorPlate: "#fff",
+          borderShadowWidth: 0,
+          borders: false,
+          needleType: "arrow",
+          needleWidth: 2,
+          needleCircleSize: 7,
+          needleCircleOuter: true,
+          needleCircleInner: false,
+          animationDuration: 1500,
+          animationRule: "linear"
+      });
+      gauge.draw();
+      gauge.value = "0";
+    });
+    </script>
+ </head>
+ <body>
+  <h1>Flask-SocketIO Test</h1>
+
+  <form id="connect" method="GET" action="#">
+    <input type="submit" value="Open">
+  </form>
+  
+  <form id="disconnect" method="GET" action="#">
+    <input type="submit" value="Close">
+  </form>
+  
+  <button id="buttonVal" value="start">Start</button>
+  
+  <h2>Ramp state:</h2>
+  <canvas id="canvasID"></canvas>
+  <h2>Receive:</h2>
+  <div id="log"></div>
+ </body>
+</html>
