@@ -12,7 +12,7 @@ async_mode = None
 app = Flask(__name__)
 
 
-ser = serial.Serial('/dev/ttyACM0', 9600)
+ser = serial.Serial('/dev/ttyACM0', 9600) #Spojenie s Arduinom cez seriovu komunikaciu
 config = ConfigParser.ConfigParser()
 config.read('config.cfg')
 myhost = config.get('mysqlDB', 'host')
@@ -28,14 +28,14 @@ thread = None
 thread_lock = Lock() 
 
 def background_thread(args):
-    global toggle
+    global toggle #Globalna premenna toggle pre zapnutie/vypnutie zaznamu hodnot
     count = 0
     dataList = []
     db = MySQLdb.connect(host=myhost,user=myuser,passwd=mypasswd,db=mydb)
     while True:
-        if ser.in_waiting > 0:
-            try:
-                data = ser.readline().decode().strip()
+        if ser.in_waiting > 0: #Ak je na seriovej komunikacii aspon jeden neprecitany byte, podmienka je splnena
+            try: #Try-except klauzula kvoli vypadku komunikacie
+                data = ser.readline().decode().strip() #Precitanie posledneho riadku zo seriovej komunikacie, dekodovanie a nasledne odstranenie tzv. "trailing whitespaces"
             except:
                 print()
             print(data)
@@ -55,9 +55,9 @@ def background_thread(args):
                     cursor = db.cursor()
                     aux = json.dumps(dataList)
                     print(aux)
-                    cursor.execute("INSERT INTO final (data) VALUES (%s)", (str(aux),))
-                    db.commit()
-                    write2file(aux)
+                    cursor.execute("INSERT INTO final (data) VALUES (%s)", (str(aux),)) #SQL prikaz na ulozenie do databazy
+                    db.commit() #Commit databazy, teda potvrdenie zapisu
+                    write2file(aux) #Zapis hodnot do textoveho suboru
                 dataList = []
             socketio.emit('my_response',
                           {'data': data, 'count': count},
@@ -108,7 +108,7 @@ def db():
   rv = cursor.fetchall()
   return str(rv[0])
 
-@app.route('/dbdata/<string:num>', methods=['GET', 'POST'])
+@app.route('/dbdata/<string:num>', methods=['GET', 'POST']) #Funkcia na citanie z databazy
 def dbdata(num):
   db = MySQLdb.connect(host=myhost,user=myuser,passwd=mypasswd,db=mydb)
   cursor = db.cursor()
@@ -116,12 +116,12 @@ def dbdata(num):
   rv = cursor.fetchone()
   return str(rv[0])
   
-@app.route('/read/<string:num>')
+@app.route('/read/<string:num>') #Funkcia na citanie zo suboru
 def filedata(num):
     print(num)
     return str(readmyfile(num))
 
-def readmyfile(num):
+def readmyfile(num): #Pomocna funkcia na precitanie celeho suboru
     fo = open("static/files/final.txt","r")
     rows = fo.readlines()
     return rows[int(num)-1]

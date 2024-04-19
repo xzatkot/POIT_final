@@ -11,7 +11,7 @@
     $(document).ready(function() {
       var socket;
       let ready = false;
-      $('form#connect').submit(function(event) {
+      $('form#connect').submit(function(event) { //Inicializacia spojenia az po kliknuti na tlacitko Open (id=connect)
         console.log('Connected');
         namespace = '/test';
         socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);        
@@ -22,15 +22,15 @@
         
         socket.on('my_response', function(msg) {
           console.log(msg.data);
-          $('#log').append('Received #'+msg.count+': '+msg.data+'<br>').html();
-          if (parseFloat(msg.data) < 20) {
+          $('#log').append('Received #'+msg.count+': '+msg.data+'<br>').html(); //Vypis hodnot v textovej forme
+          if (parseFloat(msg.data) < 20) { //Otacanie rucickovym ukazovatelom na zaklade prijatej hodnoty sparsovanej na datovy typ Float
             gauge.value = 1;
           } else {
             gauge.value = 0;
           }
         });
         
-        $('#buttonVal').click(function(event) {
+        $('#buttonVal').click(function(event) { //Spustenie/vypnutie zaznamu hodnot
           console.log($('#buttonVal').val());
           socket.emit('db_event', {value: $('#buttonVal').val()});
           if ($(this).val() == "start") {
@@ -50,7 +50,7 @@
         });
       });
       
-      var gauge = new RadialGauge({
+      var gauge = new RadialGauge({ // Rucickovy ukazovatel
           renderTo: 'canvasID',
           width: 300,
           height: 300,

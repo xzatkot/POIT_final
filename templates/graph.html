@@ -23,7 +23,7 @@
           }
         };
     
-    $('#database').click(function() {
+    $('#database').click(function() { //Funkcia pre zisk dat z databazy
         $.ajax({
           type: "GET",
           url: "/dbdata/"+$('#row').val(),
@@ -55,7 +55,7 @@
         });
     });
     
-    $('#file').click(function() {
+    $('#file').click(function() { //Funkcia pre zisk dat z textoveho suboru
         $.ajax({
           type: "GET",
           url: "/read/"+$('#row').val(),
