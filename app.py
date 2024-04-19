@@ -2,11 +2,9 @@ import serial
 from threading import Lock
 from flask import Flask, render_template, session, request, jsonify, url_for
 from flask_socketio import SocketIO, emit, disconnect
-import MySQLdb       
-import math
+import MySQLdb
 import time
 import configparser as ConfigParser
-import random
 import json
 
 async_mode = None
@@ -40,7 +38,6 @@ def background_thread(args):
                 data = ser.readline().decode().strip()
             except:
                 print()
-            # dist = data.split(' ')[1]
             print(data)
             if args:
                 toggle = dict(args).get('toggle')
@@ -92,7 +89,6 @@ def test_connect():
     with thread_lock:
         if thread is None:
             thread = socketio.start_background_task(target=background_thread, args=session._get_current_object())
-   # emit('my_response', {'data': 'Connected', 'count': 0})
 
 @socketio.on('db_event', namespace='/test')
 def db_message(message):

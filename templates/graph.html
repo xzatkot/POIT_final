@@ -22,40 +22,6 @@
             range: [0,1200]
           }
         };
-
-    //$('#row').change(function() {
-        //$.ajax({
-          //type: "GET",
-          //url: "/dbdata/"+$(this).val(),
-          //success:function(data) 
-          //{ console.log(data);
-            //data = JSON.parse(data);
-            //console.log(data);
-            
-            //xl = [];
-            //yl = [];
-            
-            //$('#data')[0].innerText="";
-    
-            //data.forEach(function(entry) {
-              //xl.push(entry['x']);
-              //yl.push(entry['data']);
-              //$('#data')[0].innerText+="x: "+entry['x']+", distance: "+entry['data']+"\n";
-            //});
-            //let trace = {
-                //x: xl,
-                //y: yl,
-                //mode: 'lines',
-                //type: 'scatter',
-                //name: 'distance' };
-            //console.log(trace);
-            //Plotly.newPlot($('#plotdiv')[0], [trace], layout);         
-          //}
-        //}).done(function( o ) {
-           //// do something
-        //});    
-       //});   
-    //});
     
     $('#database').click(function() {
         $.ajax({
@@ -86,7 +52,6 @@
             Plotly.newPlot($('#plotdiv')[0], [trace], layout);         
           }
         }).done(function( o ) {
-           // do something
         });
     });
     
@@ -119,7 +84,6 @@
             Plotly.newPlot($('#plotdiv')[0], [trace], layout);         
           }
         }).done(function( o ) {
-           // do something
         });
     });
     });
