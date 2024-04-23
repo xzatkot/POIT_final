@@ -42,7 +42,7 @@ def background_thread(args):
             if args:
                 toggle = dict(args).get('toggle')
             print(toggle)  
-            socketio.sleep(2)
+            socketio.sleep(1)
             if toggle == 'start':
                 dataDict = {
                     "t": time.time(),
