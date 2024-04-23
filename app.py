@@ -104,9 +104,15 @@ def graph():
 def db():
   db = MySQLdb.connect(host=myhost,user=myuser,passwd=mypasswd,db=mydb)
   cursor = db.cursor()
-  cursor.execute('''SELECT data FROM final WHERE id=1''')
+  cursor.execute('''SELECT data FROM final''')
   rv = cursor.fetchall()
-  return str(rv[0])
+  return str(rv)
+  
+@app.route('/file')
+def file_read():
+  fo = open("static/files/final.txt","r")
+  rows = fo.readlines()
+  return str(rows)
 
 @app.route('/dbdata/<string:num>', methods=['GET', 'POST']) #Funkcia na citanie z databazy
 def dbdata(num):
