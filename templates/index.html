@@ -15,7 +15,6 @@
     <script charset="utf-8" type="text/javascript">
         $(document).ready(function () {
             let socket;
-            let ready = false;
             $('form#connect').submit(function (event) { //Inicializacia spojenia az po kliknuti na tlacitko Open (id=connect)
                 console.log('Connected');
                 namespace = '/test';
@@ -25,6 +24,18 @@
                     socket.emit('my_event', {data: 'I\'m connected!', value: 1});
                 });
 
+                var layout = {
+                    title: 'Output variable',
+                    xaxis: {
+                        title: 'time',
+                        range: [0, 30]
+                    },
+                    yaxis: {
+                        title: 'ys(t)',
+                        range: [0, 1200]
+                    }
+                };
+                let traces = [];
                 socket.on('my_response', function (msg) {
                     console.log(msg.data);
                     $('#log').append('Received #' + msg.count + ': ' + msg.data + '<br>').html(); //Vypis hodnot v textovej forme
@@ -33,6 +44,12 @@
                     } else {
                         gauge.value = 0;
                     }
+                    let trace = {
+                        x: msg.count,
+                        y: msg.data
+                    }
+                    traces.push(trace);
+                    Plotly.newPlot($('#plotdiv')[0], [trace], layout);
                 });
 
                 $('#buttonVal').click(function (event) { //Spustenie/vypnutie zaznamu hodnot
@@ -126,9 +143,14 @@
         <canvas id="canvasID"></canvas>
     </div>
 </div>
-<div>
-    <h2 style="padding-left: 20px">Received:</h2>
-    <div id="log"></div>
+<div class="row">
+    <div class="col-6">
+        <h2 style="padding-left: 20px">Received:</h2>
+        <div id="log"></div>
+    </div>
+    <div class="col-6">
+        <div id="plotdiv" style="width:600px;height:500px;"></div>
+    </div>
 </div>
 </body>
 </html>
